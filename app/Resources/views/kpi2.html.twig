@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ kpi2 }}</h1>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cím</th>
+                <th>Író</th>
+                <th>Url</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for document in bookDocuments %}
+                <tr>
+                    <td>{{ document.id }}</td>
+                    <td>{{ document.name }}</td>
+                    <td>{{ document.author }}</td>
+                    <td>{{ document.url }}</td>
+                    <td><a href="{{ path('delete_book_document', {'id': document.id}) }}">Törlés</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <h3>Új felvétele</h3>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}

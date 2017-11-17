@@ -1,0 +1,23 @@
+{#{% extends 'base.html.twig' %}#}
+
+{% block body %}
+    <h1>{{ kpi3 }}</h1>
+    <table class="table table-responsive">
+        <thead>
+        <tr>
+            <th>Task-szám</th>
+            <th>Logolt idő</th>
+            <th>Review idő</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for issue in reviewFixIssues.issues %}
+            <tr>
+                <td><a href="https://jira.virgo.hu/browse/{{ reviewFixParents[loop.index-1].key }}" target="_blank">{{ reviewFixParents[loop.index-1].key }}</a></td>
+                <td>{{ developmentTimes[loop.index-1] / 3600 }} óra</td>
+                <td>{{ issue.fields.timespent|default(0) / 3600 }} óra</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

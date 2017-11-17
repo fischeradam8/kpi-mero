@@ -1,0 +1,16 @@
+main:
+    path: /
+    defaults: { _controller: AppBundle:Default:index }
+
+new_book_document:
+    path: /add/{name}/{url}
+    defaults: { _controller: AppBundle:Default:createBookDocument}
+    requirements:
+        name: .*
+        url: .*
+
+delete_book_document:
+    path: /remove/{id}
+    defaults: { _controller: AppBundle:Default:deleteBookDocument}
+    requirements:
+        id: \d+

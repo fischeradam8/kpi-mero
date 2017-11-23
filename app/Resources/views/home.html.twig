@@ -6,7 +6,7 @@
     <div>
         <h3>{{ kpi1 }}</h3>
         <h4>Jira task: <a target="_blank" href="https://jira.virgo.hu/browse/{{ appIssue.key }}">{{ appIssue.key }}</a></h4>
-        <h5>Logolt órák: {{ appIssue.fields.timetracking.timeSpent }}</h5>
+        <h5>Logolt órák: {{ appIssue.loggedHours + 10 }}</h5>
         <h4 id="appDoneIssues"></h4>
         <h4 id="appRemainingIssues"></h4>
     </div>
@@ -14,7 +14,7 @@
     <div>
         <h3>{{ kpi2 }}</h3>
         <h4>Jira task: <a target="_blank" href="https://jira.virgo.hu/browse/{{ bookIssue.key }}">{{ bookIssue.key }}</a></h4>
-        <h5>Logolt órák: {{ bookIssue.fields.timetracking.timeSpent }}</h5>
+        <h5>Logolt órák: {{ bookIssue.loggedHours + 3 }}</h5>
         <h4>Feldolgozandó témák: {{ 8- numberOfDocuments|default(0) }} </h4>
         <h4>Feldolgozott témák: {{ numberOfDocuments|default(0) }}   </h4>
     </div>

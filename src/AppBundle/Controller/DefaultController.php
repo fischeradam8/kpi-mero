@@ -14,6 +14,7 @@ class DefaultController extends Controller
 
     public function indexAction(Request $request)
     {
+        //Repository
         $queryString = $request->getQueryString();
 
         $em = $this->getDoctrine()->getManager();
@@ -45,39 +46,17 @@ class DefaultController extends Controller
             );
         }
 
-        $issueService = $this->get('jira_api.issue');
-        $issueSearchService = $this->get('jira_api.search');
-        $appIssue = $issueService->get('WLOG-599');
-        $bookIssue = $issueService->get('WLOG-598');
-        $reviewFixIssues = $issueSearchService ->search(
-            array(
-                'jql' => 'assignee="fischer.adam" and text ~ "review fix"'
-            )
-        );
-        $reviewFixParents = [];
-        foreach ($reviewFixIssues['issues'] as $issue) {
-            $reviewFixParents[] = $issueService->get($issue['fields']['parent']['key']);
-        }
-
-        $developmentTimes= [];
-        foreach ($reviewFixParents as $revFixParent) {
-            $time = 0;
-            foreach ($revFixParent['fields']['subtasks'] as $subtask) {
-                $issue = $issueService->get($subtask['key']);
-                if ($issue['fields']['issuetype']['name'] == 'Backend' && $issue['fields']['summary'] !== 'Review'&& $issue['fields']['summary'] !== 'Review fix') {
-                    $time += $issue['fields']['timespent'];
-                }
-            }
-            $developmentTimes[] = $time;
-        }
-
+        $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes('fischer.adam');
+        $reviewFixParents= $reviewFixIssues['parents'];
+        $reviewFixTimes = $reviewFixIssues['reviewFixTimes'];
+        $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', 'fischer.adam');
+        $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', 'fischer.adam');
         return $this->render('default/index.html.twig', array(
             'numberOfDocuments' => count($bookDocuments),
             'appIssue' => $appIssue,
             'bookIssue' => $bookIssue,
-            'reviewFixIssues' => $reviewFixIssues,
             'reviewFixParents' => $reviewFixParents,
-            'developmentTimes' => $developmentTimes,
+            'reviewFixTimes' => $reviewFixTimes,
             'form' => $form->createView(),
             'bookDocuments' => $bookDocuments,
             'queryString' => $queryString,
@@ -98,6 +77,14 @@ class DefaultController extends Controller
         $em->flush();
 
         return $this->redirectToRoute('main');
+    }
+
+    /**
+     * @return \AppBundle\Utils\JiraCalculator|object
+     */
+    protected function getJiraCalculator()
+    {
+        return $this->get('jira_calculator');
     }
 
 

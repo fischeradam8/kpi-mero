@@ -13,6 +13,7 @@
     },
     "require": {
         "php": ">=5.3.9",
+        "cdaguerre/php-trello-api": "@dev",
         "doctrine/annotations": "1.2.7",
         "doctrine/doctrine-bundle": "~1.4",
         "doctrine/orm": "^2.4.8",

@@ -51,6 +51,7 @@ class DefaultController extends Controller
         $reviewFixTimes = $reviewFixIssues['reviewFixTimes'];
         $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', 'fischer.adam');
         $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', 'fischer.adam');
+        $boards = $this->get('trello_api')->getBoard();
         return $this->render('default/index.html.twig', array(
             'numberOfDocuments' => count($bookDocuments),
             'appIssue' => $appIssue,

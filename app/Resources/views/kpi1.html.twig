@@ -1,100 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{{ kpi1 }}</h1>
-    <blockquote class="trello-board-compact">
-        <a href="https://trello.com/b/2qMgPhxH/kpi-m%C3%A9r%C5%91-board"></a>
-    </blockquote>
+    <h1><a href="https://trello.com/b/2qMgPhxH/kpi-m%C3%A9r%C5%91-board" target="_blank">{{ kpi1 }}</a></h1>
     <div class="row">
         <div class="col-md-6" id="todo">
             <strong>Hátralévő taskok</strong>
             <hr>
+            {% for card in cardsTodo %}
+                <div>
+                    <h4>{{ card.name }}</h4>
+                </div>
+            {% endfor %}
         </div>
         <div class="col-md-6" id="done">
-            <strong>Elkészült taskok</strong>
             <hr>
+            <strong>Elkészült taskok</strong>
+            {% for card in cardsDone %}
+                <div>
+                    <s><h4>{{ card.name }}</h4></s>
+                </div>
+            {% endfor %}
+
         </div>
     </div>
-    <script src="https://api.trello.com/1/client.js?key=3911de295390be89d010307f4c2482af"></script>
-    <script src="https://p.trellocdn.com/embed.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            Trello.authorize({
-                interactive: true,
-                type: "popup",
-                expiration: "never",
-                name: "KPI-meter",
-                persist: "true",
-                success: function() { onAuthorizeSuccessful(); },
-                error: function() { onFailedAuthorization(); },
-                scope: { read: true, write: false},
-            });
-
-            function onAuthorizeSuccessful() {
-                var token = Trello.token();
-                console.log(token);
-                Trello.get("board/2qMgPhxH/cards", {},
-                    function(data) {
-                        console.log(data);
-                        for (i = 0; i < data.length; i++) {
-                            if (data[i].labels.length === 0) {
-                                $('#todo').append(
-                                    '<div>' +
-                                    '<h3>' + data[i].name + '</h3>' +
-                                    '<p>' + data[i].desc + '</p>' +
-                                    '</div>'
-                                )
-                            }
-                            labels = [];
-                            for (j = 0; j <data[i].labels.length; j++) {
-                                labels.push(data[i].labels[j].name);
-                            }
-                            if ($.inArray("Done", labels) !== -1) {
-                                $('#done').append(
-                                    '<div>' +
-                                    '<h3><s>' + data[i].name + '</s></h3>' +
-                                    '<p>' + data[i].desc + '</p>' +
-                                    '</div>'
-                                );
-                                labels = [];
-                            }
-                            else {
-                                console.log('else');
-                                console.log(labels);
-                                $('#todo').append(
-                                    '<div>' +
-                                    '<h3>' + data[i].name + '</h3>' +
-                                    '<p>' + data[i].desc + '</p>' +
-                                    '</div>'
-                                )
-                                labels = [];
-                            }
-                            /*for (j = 0; j< data[i].labels.length; j++) {
-                                if (data[i].labels[j].name === "Done") {
-                                    $('#done').append(
-                                        '<div>' +
-                                        '<h3><s>' + data[i].name + '</s></h3>' +
-                                        '<p>' + data[i].desc + '</p>' +
-                                        '</div>'
-                                    );
-                                }
-                                else {
-                                    $('#todo').append(
-                                        '<div>' +
-                                        '<h3>' + data[i].name + '</h3>' +
-                                        '<p>' + data[i].desc + '</p>' +
-                                        '</div>'
-                                    )
-                                }
-                            }*/
-                        }
-                    });
-            }
-
-            function onFailedAuthorization() {
-                console.log("Authorization failed.");
-            }
-        });
-    </script>
 {% endblock %}
 

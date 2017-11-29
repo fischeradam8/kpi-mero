@@ -18,6 +18,6 @@ class BookDocumentType extends AbstractType
 
     public function getName()
     {
-        return 'app_task';
+        return 'book_document';
     }
 }

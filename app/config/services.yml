@@ -8,3 +8,4 @@ services:
 
     trello_api:
         class: AppBundle\Utils\TrelloApiService
+        arguments: [@service_container]

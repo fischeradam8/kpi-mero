@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\BookDocument;
+use AppBundle\Entity\JuniorDeveloper;
 use AppBundle\Form\BookDocumentType;
+use AppBundle\Form\JuniorDeveloperType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,14 +16,11 @@ class DefaultController extends Controller
 
     public function indexAction(Request $request)
     {
-        //Repository
         $queryString = $request->getQueryString();
 
         $em = $this->getDoctrine()->getManager();
-        $query= $em->createQuery(
-            'SELECT book_document FROM AppBundle:BookDocument book_document'
-        );
-        $bookDocuments = $query->getResult();
+        $repository = $this->getDoctrine()->getRepository(BookDocument::class);
+        $bookDocuments = $repository->findAll();
 
         $newDocument = new BookDocument();
         $form = $this->createFormBuilder($newDocument)
@@ -47,11 +46,11 @@ class DefaultController extends Controller
         }
 
         $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes('fischer.adam');
-        $reviewFixParents= $reviewFixIssues['parents'];
+        $reviewFixParents = $reviewFixIssues['parents'];
         $reviewFixTimes = $reviewFixIssues['reviewFixTimes'];
         $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', 'fischer.adam');
         $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', 'fischer.adam');
-        $boards = $this->get('trello_api')->getBoard();
+        $board = $this->get('trello_api')->getBoard();
         return $this->render('default/index.html.twig', array(
             'numberOfDocuments' => count($bookDocuments),
             'appIssue' => $appIssue,
@@ -61,6 +60,8 @@ class DefaultController extends Controller
             'form' => $form->createView(),
             'bookDocuments' => $bookDocuments,
             'queryString' => $queryString,
+            'cardsDone' => $board['done'],
+            'cardsTodo' => $board['todo'],
         ));
     }
 

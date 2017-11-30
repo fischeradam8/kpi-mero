@@ -35,7 +35,7 @@ class SecurityController extends Controller
             $password = $this->get('security.password_encoder')
                 ->encodePassword($juniorDeveloper, $juniorDeveloper->getPassword());
             $juniorDeveloper->setPassword($password);
-
+            $juniorDeveloper->setRoles('ROLE_USER');
             $em = $this->getDoctrine()->getManager();
             $em->persist($juniorDeveloper);
             $em->flush();

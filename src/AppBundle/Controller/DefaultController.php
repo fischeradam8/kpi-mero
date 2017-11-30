@@ -18,6 +18,8 @@ class DefaultController extends Controller
     {
         $queryString = $request->getQueryString();
 
+        $currentUser = $this->getUser();
+
         $em = $this->getDoctrine()->getManager();
         $repository = $this->getDoctrine()->getRepository(BookDocument::class);
         $bookDocuments = $repository->findAll();
@@ -33,7 +35,7 @@ class DefaultController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newDocument = $form->getData();
-            $newDocument->setAuthor('Fischer Ádám');
+            $newDocument->setAuthor($currentUser->getDisplayName());
             $em->persist($newDocument);
             $em->flush();
 
@@ -45,13 +47,14 @@ class DefaultController extends Controller
             );
         }
 
-        $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes('fischer.adam');
+        $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes($currentUser->getUsername());
         $reviewFixParents = $reviewFixIssues['parents'];
         $reviewFixTimes = $reviewFixIssues['reviewFixTimes'];
-        $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', 'fischer.adam');
-        $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', 'fischer.adam');
+        $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', $currentUser->getUsername());
+        $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', $currentUser->getUsername());
         $board = $this->get('trello_api')->getBoard();
         return $this->render('default/index.html.twig', array(
+            'currentUser' => $currentUser->getDisplayName(),
             'numberOfDocuments' => count($bookDocuments),
             'appIssue' => $appIssue,
             'bookIssue' => $bookIssue,

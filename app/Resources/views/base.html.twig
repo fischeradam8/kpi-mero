@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {% set title = 'Ádám KPI mérőszámai' %}
+        {% set user = currentUser %}
+        {% set title = user ~ ' KPI mérőszámai' %}
         <meta charset="UTF-8" />
         <title>{% block title %}{{ title }}{% endblock %}</title>
         {% block stylesheets %}

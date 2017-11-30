@@ -14,6 +14,7 @@ class JuniorDeveloperType extends AbstractType
     {
         $builder
             ->add('username', 'text')
+            ->add('displayName', 'text')
             ->add('password', 'repeated', array(
                 'type' => 'password',
                 'first_options'  => array('label' => 'Password'),

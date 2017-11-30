@@ -29,6 +29,27 @@ class JuniorDeveloper implements UserInterface, \Serializable
     private $roles;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $displayName;
+
+    /**
+     * @return mixed
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName;
+    }
+
+    /**
+     * @param mixed $displayName
+     */
+    public function setDisplayName($displayName)
+    {
+        $this->displayName = $displayName;
+    }
+
+    /**
      * @param mixed $username
      */
     public function setUsername($username)

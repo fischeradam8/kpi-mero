@@ -4,7 +4,7 @@ parameters:
 services:
     jira_calculator:
         class: AppBundle\Utils\JiraCalculator
-        arguments: ['@jira_api.issue', '@jira_api.search']
+        arguments: ['@jira_api.issue', '@jira_api.search', @doctrine.orm.entity_manager]
 
     trello_api:
         class: AppBundle\Utils\TrelloApiService

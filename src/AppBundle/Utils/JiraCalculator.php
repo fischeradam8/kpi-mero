@@ -12,15 +12,30 @@ class JiraCalculator
     private $jiraIssueApi;
     private $jiraSearchApi;
 
-    public function getLoggedTimeOnIssue(string $issueKey, string $userName): array
+    public function getLoggedTimeOnIssue(string $issueKey, string $userName, bool $useDB = true): array
     {
-        $issue = $this->checkDatabase($issueKey);
-
-        if ($issue) {
-            return $issue;
+        if ($useDB){
+            $issue = $this->checkDatabase($issueKey);
+            if ($issue) {
+                return $issue;
+            }
         }
 
         $issue = $this->jiraIssueApi->get($issueKey);
+
+        if (count($issue['fields']['subtasks']) === 2) {
+            $loggedHours = 0;
+            foreach ($issue['fields']['worklog']['worklogs'] as $worklog) {
+                if ($worklog['author']['name'] === $userName) {
+                    $loggedHours += $worklog['timeSpentSeconds'] / 3600;
+                }
+            }
+            return [
+                'name' => $issue['fields']['summary'],
+                'key' => $issue['key'],
+                'loggedHours' => $loggedHours,
+            ];
+        }
 
         if (empty($issue['fields']['subtasks'])) {
             $loggedHours = 0;

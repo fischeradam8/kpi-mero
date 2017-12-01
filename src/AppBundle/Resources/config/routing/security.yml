@@ -1,0 +1,10 @@
+login:
+    path: /login
+    defaults: {_controller: AppBundle:Security:login}
+
+logout:
+    path: /logout
+
+registration:
+    path: /registration
+    defaults: { _controller: AppBundle:Security:registration}

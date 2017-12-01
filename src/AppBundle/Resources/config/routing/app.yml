@@ -1,0 +1,9 @@
+main:
+    path: /
+    defaults: { _controller: AppBundle:Default:index }
+
+delete_book_document:
+    path: /remove/{id}
+    defaults: { _controller: AppBundle:Default:deleteBookDocument}
+    requirements:
+        id: \d+

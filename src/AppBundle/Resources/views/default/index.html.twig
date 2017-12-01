@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 {% set kpi1 = 'Mérő-app' %}
 {% set kpi2 = 'Könyv' %}
 {% set kpi3 = 'Review pontok' %}
@@ -16,16 +16,16 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="kpi1">
-                {% include 'home.html.twig' %}
+                {% include '@App/home.html.twig' %}
             </div>
             <div class="tab-pane" id="kpi2">
-                {% include 'kpi1.html.twig' %}
+                {% include '@App/kpi1.html.twig' %}
             </div>
             <div class="tab-pane" id="kpi3">
-                {% include 'kpi2.html.twig' %}
+                {% include '@App/kpi2.html.twig' %}
             </div>
             <div class="tab-pane" id="kpi4">
-                {% include 'kpi3.html.twig' %}
+                {% include '@App/kpi3.html.twig' %}
             </div>
         </div>
     </div>

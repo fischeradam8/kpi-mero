@@ -51,9 +51,9 @@ class DefaultController extends Controller
         $reviewFixParents = $reviewFixIssues['parents'];
         $reviewFixTimes = $reviewFixIssues['reviewFixTimes'];
         $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', $currentUser->getUsername());
-        $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-87', $currentUser->getUsername());
+        $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-85', $currentUser->getUsername());
         $board = $this->get('trello_api')->getBoard();
-        return $this->render('default/index.html.twig', array(
+        $response = $this->render('@App/default/index.html.twig', array(
             'currentUser' => $currentUser->getDisplayName(),
             'numberOfDocuments' => count($bookDocuments),
             'appIssue' => $appIssue,
@@ -66,6 +66,9 @@ class DefaultController extends Controller
             'cardsDone' => $board['done'],
             'cardsTodo' => $board['todo'],
         ));
+        $response->setSharedMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+        return $response;
     }
 
     public function deleteBookDocumentAction(Request $request, int $id)

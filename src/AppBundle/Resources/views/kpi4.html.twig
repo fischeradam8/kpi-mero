@@ -4,7 +4,6 @@
     {{ form_start(issueForm) }}
     {{ form_widget(issueForm) }}
     {{ form_end(issueForm) }}
-    <a href="">Lekérem!</a>
     <table class="table table-responsive">
         <thead>
         <tr>
@@ -20,14 +19,16 @@
     <script>
         $('form').submit(function(e) {
             e.preventDefault();
-            var url = "{{ path('single_issue_ajax') }}";
-            var formSerialize = $(this).serialize();
-            console.log(formSerialize);
-            /*$.post(url, formSerialize, function(response) {
-                //your callback here
-                alert(response);
+            var taskNumber = $('#issue_form_taskNumber').val();
+            var user = $('#issue_form_developer').val();
+            var url = "/ajax/" + taskNumber + "/" + user;
+            $.get(url, function(response) {
+                $('tbody').append("<tr>" +
+                    "<td>"+response.key+"</td>" +
+                    "<td>"+user+"</td>" +
+                    "<td>"+response.loggedHours+"</td>" +
+                    "</tr>")
             }, 'JSON');
-        });*/
         });
     </script>
 {% endblock %}

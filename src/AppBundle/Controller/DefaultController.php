@@ -91,9 +91,10 @@ class DefaultController extends Controller
         return $this->redirectToRoute('main');
     }
 
-    public function singleTaskAction(string $taskNumber, string $user): Response
+    public function singleTaskAction(string $task, string $user): Response
     {
-        return json_encode($this->getJiraCalculator()->getLoggedTimeOnIssue($taskNumber, $user));
+        $jsonResponse = json_encode($this->getJiraCalculator()->getLoggedTimeOnIssue($task, $user));
+        return new Response($jsonResponse);
     }
 
     /**

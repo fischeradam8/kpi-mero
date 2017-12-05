@@ -8,7 +8,7 @@ single_issue_ajax:
     requirements:
         task: '[a-zA-Z]{1,9}-\d{1,4}'
         user: '[a-zA-Z]{1,20}\.[a-zA-Z]{1,20}'
-        methods: '[POST]'
+        methods: '[GET]'
 
 delete_book_document:
     path: /remove/{id}

@@ -14,8 +14,10 @@ class JiraCalculator
 
     public function getLoggedTimeOnIssue(string $issueKey, string $userName, bool $useDB = true): array
     {
+        $userId = $this->em->getRepository('AppBundle:JuniorDeveloper')->findOneBy(['username' => $userName])->getId();
+
         if ($useDB){
-            $issue = $this->checkDatabase($issueKey);
+            $issue = $this->checkDatabase($issueKey, $userId);
             if ($issue) {
                 return $issue;
             }
@@ -61,9 +63,10 @@ class JiraCalculator
             }
         }
 
+
         $savedIssue = new JiraIssue();
         $savedIssue->setName($issue['fields']['summary']);
-        $savedIssue->setAssigneeId(1);//TODO később átírni
+        $savedIssue->setAssigneeId($userId);
         $savedIssue->setTaskNumber($issue['key']);
         $savedIssue->setHoursLoggedByAssignee($loggedHours);
         $this->em->persist($savedIssue);
@@ -101,8 +104,8 @@ class JiraCalculator
         return $issues;
     }
 
-    private function checkDatabase(string $issueKey) //TODO id-t is vizsgálni
-    {   $task = $this->em->getRepository(JiraIssue::class)->findOneBy(array("taskNumber" => $issueKey));
+    private function checkDatabase(string $issueKey, int $userId)
+    {   $task = $this->em->getRepository(JiraIssue::class)->findOneBy(array("taskNumber" => $issueKey, "assigneeId" => $userId));
         if ($task) {
             return array(
                 'name' => $task->getName(),

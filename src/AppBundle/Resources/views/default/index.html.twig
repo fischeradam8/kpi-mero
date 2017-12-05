@@ -2,6 +2,7 @@
 {% set kpi1 = 'Mérő-app' %}
 {% set kpi2 = 'Könyv' %}
 {% set kpi3 = 'Review pontok' %}
+{% set kpi4 = 'Lekérdező' %}
 {% block body %}
     {% if queryString is defined and queryString == true %}
         <h3>Nem megfelelő url!</h3>
@@ -13,6 +14,7 @@
             <li><a href="#kpi2" data-toggle="tab">{{ kpi1 }}</a></li>
             <li><a href="#kpi3" data-toggle="tab">{{ kpi2 }}</a></li>
             <li><a href="#kpi4" data-toggle="tab">{{ kpi3 }}</a></li>
+            <li><a href="#kpi5" data-toggle="tab">{{ kpi4 }}</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="kpi1">
@@ -26,6 +28,8 @@
             </div>
             <div class="tab-pane" id="kpi4">
                 {% include '@App/kpi3.html.twig' %}
+            </div><div class="tab-pane" id="kpi5">
+                {% include '@App/kpi4.html.twig' %}
             </div>
         </div>
     </div>

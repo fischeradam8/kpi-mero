@@ -9,3 +9,8 @@ services:
     trello_api:
         class: AppBundle\Utils\TrelloApiService
         arguments: [@service_container]
+
+    issue_form:
+        class: AppBundle\Form\IssueType
+        tags:
+            - { name: form.type }

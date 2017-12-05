@@ -1,0 +1,35 @@
+{% extends '@App/base.html.twig' %}
+
+{% block body %}
+    {{ form_start(issueForm) }}
+    {{ form_widget(issueForm) }}
+    {{ form_end(issueForm) }}
+    <a href="">Lekérem!</a>
+    <table class="table table-responsive">
+        <thead>
+        <tr>
+            <th>Task száma</th>
+            <th>Programozó neve</th>
+            <th>Logolt idő</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script>
+        $('form').submit(function(e) {
+            e.preventDefault();
+            var url = "{{ path('single_issue_ajax') }}";
+            var formSerialize = $(this).serialize();
+            console.log(formSerialize);
+            /*$.post(url, formSerialize, function(response) {
+                //your callback here
+                alert(response);
+            }, 'JSON');
+        });*/
+        });
+    </script>
+{% endblock %}
+
+

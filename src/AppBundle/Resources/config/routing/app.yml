@@ -2,6 +2,14 @@ main:
     path: /
     defaults: { _controller: AppBundle:Default:index }
 
+single_issue_ajax:
+    path: /ajax/{task}/{user}
+    defaults: { _controller: AppBundle:Default:singleTask}
+    requirements:
+        task: '[a-zA-Z]{1,9}-\d{1,4}'
+        user: '[a-zA-Z]{1,20}\.[a-zA-Z]{1,20}'
+        methods: '[POST]'
+
 delete_book_document:
     path: /remove/{id}
     defaults: { _controller: AppBundle:Default:deleteBookDocument}

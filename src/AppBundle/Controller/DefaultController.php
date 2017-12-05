@@ -25,27 +25,29 @@ class DefaultController extends Controller
         $bookDocuments = $repository->findAll();
 
         $newDocument = new BookDocument();
-        $form = $this->createFormBuilder($newDocument)
+        $documentForm = $this->createFormBuilder($newDocument)
             ->add('name', 'text')
             ->add('url', 'text')
             ->add('save', 'submit', array('label' => 'Új felvétele'))
             ->getForm();
 
-        $form->handleRequest($request);
+        $documentForm->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $newDocument = $form->getData();
+        if ($documentForm->isSubmitted() && $documentForm->isValid()) {
+            $newDocument = $documentForm->getData();
             $newDocument->setAuthor($currentUser->getDisplayName());
             $em->persist($newDocument);
             $em->flush();
 
             return $this->redirectToRoute('main');
         }
-        if ($form->isSubmitted() && !$form->isValid()) {
+        if ($documentForm->isSubmitted() && !$documentForm->isValid()) {
             return $this->redirectToRoute('main',
                 array('urlInvalid' => true)
             );
         }
+
+        $issueForm = $this->createForm('issue_form');
 
         $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes($currentUser->getUsername());
         $reviewFixParents = $reviewFixIssues['parents'];
@@ -53,6 +55,7 @@ class DefaultController extends Controller
         $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', $currentUser->getUsername());
         $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-85', $currentUser->getUsername());
         $board = $this->get('trello_api')->getBoard();
+
         $response = $this->render('@App/default/index.html.twig', array(
             'currentUser' => $currentUser->getDisplayName(),
             'numberOfDocuments' => count($bookDocuments),
@@ -60,11 +63,12 @@ class DefaultController extends Controller
             'bookIssue' => $bookIssue,
             'reviewFixParents' => $reviewFixParents,
             'reviewFixTimes' => $reviewFixTimes,
-            'form' => $form->createView(),
+            'documentForm' => $documentForm->createView(),
             'bookDocuments' => $bookDocuments,
             'queryString' => $queryString,
             'cardsDone' => $board['done'],
             'cardsTodo' => $board['todo'],
+            'issueForm' => $issueForm->createView(),
         ));
         $response->setSharedMaxAge(3600);
         $response->headers->addCacheControlDirective('must-revalidate', true);
@@ -85,6 +89,11 @@ class DefaultController extends Controller
         $em->flush();
 
         return $this->redirectToRoute('main');
+    }
+
+    public function singleTaskAction(string $taskNumber, string $user): Response
+    {
+        return json_encode($this->getJiraCalculator()->getLoggedTimeOnIssue($taskNumber, $user));
     }
 
     /**

@@ -12,7 +12,7 @@
             <th>Logolt idő</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="singleIssueTable">
         </tbody>
     </table>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -23,7 +23,7 @@
             var user = $('#issue_form_developer').val();
             var url = "/ajax/" + taskNumber + "/" + user;
             $.get(url, function(response) {
-                $('tbody').append("<tr>" +
+                $('#singleIssueTable').append("<tr>" +
                     "<td>"+response.key+"</td>" +
                     "<td>"+user+"</td>" +
                     "<td>"+response.loggedHours+"</td>" +

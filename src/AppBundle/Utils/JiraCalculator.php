@@ -6,16 +6,19 @@ use AppBundle\Entity\JiraIssue;
 use Doctrine\ORM\EntityManager;
 use \JiraApiBundle\Service\IssueService;
 use \JiraApiBundle\Service\SearchService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JiraCalculator
 {
     private $jiraIssueApi;
     private $jiraSearchApi;
 
-    public function getLoggedTimeOnIssue(string $issueKey, string $userName, bool $useDB = true): array
+    public function getLoggedTimeOnIssue(string $issueKey, string $userName, bool $useDB = true, bool $singleUsage = false): array
     {
-        $userId = $this->em->getRepository('AppBundle:JuniorDeveloper')->findOneBy(['username' => $userName])->getId();
-
+        $userInDB = $this->em->getRepository('AppBundle:JuniorDeveloper')->findOneBy(['username' => $userName]);
+        if ($userInDB) {
+            $userId = $userInDB->getId();
+        }
         if ($useDB){
             $issue = $this->checkDatabase($issueKey, $userId);
             if ($issue) {
@@ -26,18 +29,21 @@ class JiraCalculator
         $issue = $this->jiraIssueApi->get($issueKey);
 
         if (count($issue['fields']['subtasks']) === 2) {
-            $loggedHours = 0;
-            foreach ($issue['fields']['worklog']['worklogs'] as $worklog) {
-                if ($worklog['author']['name'] === $userName) {
-                    $loggedHours += $worklog['timeSpentSeconds'] / 3600;
+            if ($issue['fields']['subtasks'][0]['fields']['summary'] === 'Review' ||
+                $issue['fields']['subtasks'][0]['fields']['summary'] === 'Review fix'){
+                $loggedHours = 0;
+                foreach ($issue['fields']['worklog']['worklogs'] as $worklog) {
+                    if ($worklog['author']['name'] === $userName) {
+                        $loggedHours += $worklog['timeSpentSeconds'] / 3600;
+                    }
                 }
+                return [
+                    'name' => $issue['fields']['summary'],
+                    'key' => $issue['key'],
+                    'loggedHours' => $loggedHours,
+                ];
             }
-            return [
-                'name' => $issue['fields']['summary'],
-                'key' => $issue['key'],
-                'loggedHours' => $loggedHours,
-            ];
-        }
+        };
 
         if (empty($issue['fields']['subtasks'])) {
             $loggedHours = 0;
@@ -63,14 +69,15 @@ class JiraCalculator
             }
         }
 
-
-        $savedIssue = new JiraIssue();
-        $savedIssue->setName($issue['fields']['summary']);
-        $savedIssue->setAssigneeId($userId);
-        $savedIssue->setTaskNumber($issue['key']);
-        $savedIssue->setHoursLoggedByAssignee($loggedHours);
-        $this->em->persist($savedIssue);
-        $this->em->flush();
+        if (!$singleUsage) {
+            $savedIssue = new JiraIssue();
+            $savedIssue->setName($issue['fields']['summary']);
+            $savedIssue->setAssigneeId($userId);
+            $savedIssue->setTaskNumber($issue['key']);
+            $savedIssue->setHoursLoggedByAssignee($loggedHours);
+            $this->em->persist($savedIssue);
+            $this->em->flush();
+        }
         return [
             'name' => $issue['fields']['summary'],
             'key' => $issue['key'],

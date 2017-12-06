@@ -93,7 +93,7 @@ class DefaultController extends Controller
 
     public function singleTaskAction(string $task, string $user): Response
     {
-        $jsonResponse = json_encode($this->getJiraCalculator()->getLoggedTimeOnIssue($task, $user));
+        $jsonResponse = json_encode($this->getJiraCalculator()->getLoggedTimeOnIssue($task, $user, false, true));
         return new Response($jsonResponse);
     }
 

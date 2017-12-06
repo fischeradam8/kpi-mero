@@ -6,7 +6,6 @@ use AppBundle\Entity\JiraIssue;
 use Doctrine\ORM\EntityManager;
 use \JiraApiBundle\Service\IssueService;
 use \JiraApiBundle\Service\SearchService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JiraCalculator
 {
@@ -37,6 +36,9 @@ class JiraCalculator
                         $loggedHours += $worklog['timeSpentSeconds'] / 3600;
                     }
                 }
+                if (!$singleUsage) {
+                    $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
+                }
                 return [
                     'name' => $issue['fields']['summary'],
                     'key' => $issue['key'],
@@ -52,6 +54,9 @@ class JiraCalculator
                     $loggedHours += $worklog['timeSpentSeconds'] / 3600;
                 }
             }
+            if (!$singleUsage) {
+                $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
+            }
             return [
                 'name' => $issue['fields']['summary'],
                 'key' => $issue['key'],
@@ -62,7 +67,6 @@ class JiraCalculator
         foreach ($issue['fields']['subtasks'] as $subIssue) {
             $subtask = $this->jiraIssueApi->get($subIssue['key']);
             foreach ($subtask['fields']['worklog']['worklogs'] as $worklog) {
-                //Újrafelhasználás?
                 if ($worklog['author']['name'] === $userName) {
                     $loggedHours += $worklog['timeSpentSeconds'] / 3600;
                 }
@@ -70,13 +74,7 @@ class JiraCalculator
         }
 
         if (!$singleUsage) {
-            $savedIssue = new JiraIssue();
-            $savedIssue->setName($issue['fields']['summary']);
-            $savedIssue->setAssigneeId($userId);
-            $savedIssue->setTaskNumber($issue['key']);
-            $savedIssue->setHoursLoggedByAssignee($loggedHours);
-            $this->em->persist($savedIssue);
-            $this->em->flush();
+            $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
         }
         return [
             'name' => $issue['fields']['summary'],
@@ -121,6 +119,17 @@ class JiraCalculator
             );
         };
         return false;
+    }
+
+    private function saveIssue(string $name, int $userId, string $taskNumber, int $loggedHours):void
+    {
+        $savedIssue = new JiraIssue();
+        $savedIssue->setName($name);
+        $savedIssue->setAssigneeId($userId);
+        $savedIssue->setTaskNumber($taskNumber);
+        $savedIssue->setHoursLoggedByAssignee($loggedHours);
+        $this->em->persist($savedIssue);
+        $this->em->flush();
     }
 
     public function __construct(IssueService $jiraIssueApi, SearchService $jiraSearchApi, EntityManager $em)

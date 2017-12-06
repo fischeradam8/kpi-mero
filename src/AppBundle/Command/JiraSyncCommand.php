@@ -14,7 +14,7 @@ class JiraSyncCommand extends ContainerAwareCommand
         $this
             ->setName('app:jira-sync')
 
-            ->setDescription('Syncronizes the Jira issues with the local database.')
+            ->setDescription('A review-fixek szinkronizálása')
 
             ->setHelp('No')
         ;
@@ -22,9 +22,14 @@ class JiraSyncCommand extends ContainerAwareCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $issuesToSync = $this->getEm()->getRepository('AppBundle:JiraIssue')->findAll();
-        foreach ($issuesToSync as $issue) {
-            $this->getJiraCalculator()->getLoggedTimeOnIssue($issue->getKey(),'fischer.adam', false);
+        $users =$this->getEm()->getRepository('AppBundle:JuniorDeveloper')->findAll();
+        $issues = $this->getEm()->getRepository('AppBundle:JiraIssue')->findAll();
+        foreach ($issues as $issue) {
+            $this->getEm()->remove($issue);
+        }
+        $this->getEm()->flush();
+        foreach ($users as $user) {
+            $this->getJiraCalculator()->getReviewFixes($user->getUsername());
         }
     }
 
@@ -33,8 +38,11 @@ class JiraSyncCommand extends ContainerAwareCommand
         return $this->getContainer()->get('jira_calculator');
     }
 
+    /**
+     * @return \Doctrine\Bundle\DoctrineBundle\Registry|object
+     */
     public function getEm()
     {
-        return $this->getContainer()->get('doctrine');
+        return $this->getContainer()->get('doctrine')->getManager();
     }
 }

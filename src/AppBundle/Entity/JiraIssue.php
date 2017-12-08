@@ -33,6 +33,12 @@ class JiraIssue
     private $hoursLoggedByAssignee;
 
     /**
+     * @ORM\Column(type="float")
+     */
+    private $reviewHoursLoggedByAssignee;
+
+
+    /**
      * @ORM\Column(type="string")
      */
     private $name;
@@ -115,6 +121,22 @@ class JiraIssue
     public function setHoursLoggedByAssignee($hoursLoggedByAssignee)
     {
         $this->hoursLoggedByAssignee = $hoursLoggedByAssignee;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getReviewHoursLoggedByAssignee()
+    {
+        return $this->reviewHoursLoggedByAssignee;
+    }
+
+    /**
+     * @param mixed $reviewHoursLoggedByAssignee
+     */
+    public function setReviewHoursLoggedByAssignee($reviewHoursLoggedByAssignee)
+    {
+        $this->reviewHoursLoggedByAssignee = $reviewHoursLoggedByAssignee;
     }
 
 

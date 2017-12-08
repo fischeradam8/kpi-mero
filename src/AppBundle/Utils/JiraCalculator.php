@@ -12,6 +12,13 @@ class JiraCalculator
     private $jiraIssueApi;
     private $jiraSearchApi;
 
+    public function __construct(IssueService $jiraIssueApi, SearchService $jiraSearchApi, EntityManager $em)
+    {
+        $this->jiraIssueApi = $jiraIssueApi;
+        $this->jiraSearchApi = $jiraSearchApi;
+        $this->em = $em;
+    }
+
     public function getLoggedTimeOnIssue(string $issueKey, string $userName, bool $useDB = true, bool $singleUsage = false): array
     {
         $userInDB = $this->em->getRepository('AppBundle:JuniorDeveloper')->findOneBy(['username' => $userName]);
@@ -36,9 +43,9 @@ class JiraCalculator
                         $loggedHours += $worklog['timeSpentSeconds'] / 3600;
                     }
                 }
-                if (!$singleUsage) {
-                    $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
-                }
+//                if (!$singleUsage) {
+//                    $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
+//                }
                 return [
                     'name' => $issue['fields']['summary'],
                     'key' => $issue['key'],
@@ -54,9 +61,9 @@ class JiraCalculator
                     $loggedHours += $worklog['timeSpentSeconds'] / 3600;
                 }
             }
-            if (!$singleUsage) {
-                $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
-            }
+//            if (!$singleUsage) {
+//                $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
+//            }
             return [
                 'name' => $issue['fields']['summary'],
                 'key' => $issue['key'],
@@ -73,9 +80,9 @@ class JiraCalculator
             }
         }
 
-        if (!$singleUsage) {
-            $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
-        }
+//        if (!$singleUsage) {
+//            $this->saveIssue($issue['fields']['summary'], $userId, $issue['key'], $loggedHours);
+//        }
         return [
             'name' => $issue['fields']['summary'],
             'key' => $issue['key'],
@@ -90,8 +97,13 @@ class JiraCalculator
         return $this->getLoggedTimeOnIssue($parentIssue['key'], $userName);
     }
 
-    public function getReviewFixes(string $userName): array
+    public function getReviewFixes(string $userName, bool $saved=false): array
     {
+        $currentUser = $this->em->getRepository('AppBundle:JuniorDeveloper')->findOneBy(['username' => $userName]);
+        if ($saved) {
+            $query = $this->em->getRepository('AppBundle:JiraIssue')->findBy(['assigneeId' => $currentUser->getId()]);
+            return $query;
+        }
         $reviewFixIssues = $this->jiraSearchApi->search(
             array(
                 'jql' => 'assignee="'. $userName .'" and text ~ "review fix"'
@@ -101,8 +113,11 @@ class JiraCalculator
         $parents = [];
         $reviewFixTimes = [];
         foreach ($reviewFixIssues['issues'] as $reviewFixIssue) {
-            $reviewFixTimes[] = $reviewFixIssue['fields']['timespent'] / 3600;
-            $parents[] = $this->getLoggedTimeOnParent($reviewFixIssue['key'], $userName);
+            $reviewFixLoggedTime = $reviewFixIssue['fields']['timespent'] / 3600;
+            $reviewFixTimes[] = $reviewFixLoggedTime;
+            $parentIssue = $this->getLoggedTimeOnParent($reviewFixIssue['key'], $userName);
+            $parents[] = $parentIssue;
+            $this->saveIssue($parentIssue['name'], $currentUser->getId(), $parentIssue['key'], $parentIssue['loggedHours'], $reviewFixLoggedTime);
         }
         $issues['reviewFixTimes'] = $reviewFixTimes;
         $issues['parents'] = $parents;
@@ -121,21 +136,17 @@ class JiraCalculator
         return false;
     }
 
-    private function saveIssue(string $name, int $userId, string $taskNumber, int $loggedHours):void
+    private function saveIssue(string $name, int $userId, string $taskNumber, int $loggedHours, int $reviewHours):void
     {
         $savedIssue = new JiraIssue();
         $savedIssue->setName($name);
         $savedIssue->setAssigneeId($userId);
         $savedIssue->setTaskNumber($taskNumber);
         $savedIssue->setHoursLoggedByAssignee($loggedHours);
+        $savedIssue->setReviewHoursLoggedByAssignee($reviewHours);
         $this->em->persist($savedIssue);
         $this->em->flush();
     }
 
-    public function __construct(IssueService $jiraIssueApi, SearchService $jiraSearchApi, EntityManager $em)
-    {
-        $this->jiraIssueApi = $jiraIssueApi;
-        $this->jiraSearchApi = $jiraSearchApi;
-        $this->em = $em;
-    }
+
 }

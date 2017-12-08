@@ -9,11 +9,11 @@
         </tr>
         </thead>
         <tbody>
-            {% for issue in reviewFixParents %}
+            {% for issue in reviewFixIssues %}
             <tr>
-                <td><a href="https://jira.virgo.hu/browse/{{ issue.key }}" target="_blank">{{ issue.key }}</a></td>
-                <td>{{ issue.loggedHours }} óra</td>
-                <td>{{ reviewFixTimes[loop.index-1] }} óra</td>
+                <td><a href="https://jira.virgo.hu/browse/{{ issue.taskNumber }}" target="_blank">{{ issue.taskNumber }}</a></td>
+                <td>{{ issue.hoursLoggedByAssignee }} óra</td>
+                <td>{{ issue.reviewHoursLoggedByAssignee }} óra</td>
             </tr>
         {% endfor %}
         </tbody>

@@ -14,3 +14,7 @@ services:
         class: AppBundle\Form\IssueType
         tags:
             - { name: form.type }
+
+    confluence_api:
+        class: AppBundle\Utils\ConfluenceApiService
+        arguments: [@service_container]

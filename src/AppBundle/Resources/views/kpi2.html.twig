@@ -5,27 +5,16 @@
     <table class="table table-responsive">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Cím</th>
-                <th>Író</th>
-                <th>Url</th>
             </tr>
         </thead>
         <tbody>
-            {% for document in bookDocuments %}
+            {% for document in documents %}
                 <tr>
-                    <td>{{ document.id }}</td>
-                    <td>{{ document.name }}</td>
-                    <td>{{ document.author }}</td>
-                    <td><a href="{{ document.url }}" target="_blank">{{ document.url }}</a></td>
-                    <td><a href="{{ path('delete_book_document', {'id': document.id}) }}">Törlés</a></td>
+                    <td><a href="{{'https://confluence.virgo.hu' ~ document._links.tinyui }}" target="_blank">{{ document.title }}</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     <hr>
-    <h3>Új felvétele</h3>
-    {{ form_start(documentForm) }}
-    {{ form_widget(documentForm) }}
-    {{ form_end(documentForm) }}
 {% endblock %}

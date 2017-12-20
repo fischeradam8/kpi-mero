@@ -8,7 +8,6 @@
 
 namespace AppBundle\Form;
 
-
 use AppBundle\Entity\JiraIssue;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,7 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IssueType extends AbstractType
 {
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

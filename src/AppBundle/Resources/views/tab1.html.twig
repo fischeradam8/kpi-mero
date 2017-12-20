@@ -1,10 +1,10 @@
 {% extends '@App/base.html.twig' %}
 
 {% block body %}
-    <h1><a href="https://trello.com/b/2qMgPhxH/kpi-m%C3%A9r%C5%91-board" target="_blank">{{ kpi1 }}</a></h1>
+    <h1><a href="https://trello.com/b/2qMgPhxH/kpi-m%C3%A9r%C5%91-board" target="_blank">{{ tab1 }}</a></h1>
     <div class="row">
         <div class="col-md-6" id="todo">
-            <strong>Hátralévő taskok</strong>
+            <strong>Hátralévő taskok: {{ cardsTodo|length }}</strong>
             <hr>
             {% for card in cardsTodo %}
                 <div>
@@ -13,8 +13,8 @@
             {% endfor %}
         </div>
         <div class="col-md-6" id="done">
+            <strong>Elkészült taskok: {{ cardsDone|length }}</strong>
             <hr>
-            <strong>Elkészült taskok</strong>
             {% for card in cardsDone %}
                 <div>
                     <s><h4>{{ card.name }}</h4></s>

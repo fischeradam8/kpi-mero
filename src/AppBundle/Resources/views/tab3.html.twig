@@ -1,11 +1,12 @@
 {% block body %}
-    <h1>{{ kpi3 }}</h1>
+    <h1>{{ tab3 }}</h1>
     <table class="table table-responsive">
         <thead>
         <tr>
             <th>Task-szám</th>
             <th>Logolt idő</th>
             <th>Review idő</th>
+            <th>Arányszám</th>
         </tr>
         </thead>
         <tbody>
@@ -14,6 +15,7 @@
                 <td><a href="https://jira.virgo.hu/browse/{{ issue.taskNumber }}" target="_blank">{{ issue.taskNumber }}</a></td>
                 <td>{{ issue.hoursLoggedByAssignee }} óra</td>
                 <td>{{ issue.reviewHoursLoggedByAssignee }} óra</td>
+                <td>{{ (issue.reviewHoursLoggedByAssignee / issue.hoursLoggedByAssignee)|round(2, 'floor') }}</td>
             </tr>
         {% endfor %}
         </tbody>

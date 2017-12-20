@@ -1,7 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Bejelentkezés</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
 {{ form_start(form) }}
     {{ form_row(form.username) }}
     {{ form_row(form.password.first) }}
     {{ form_row(form.password.second) }}
-
+    {{ form_row(form.displayName) }}
 <button type="submit">Register!</button>
 {{ form_end(form) }}

@@ -138,6 +138,4 @@ class JiraIssue
     {
         $this->reviewHoursLoggedByAssignee = $reviewHoursLoggedByAssignee;
     }
-
-
 }

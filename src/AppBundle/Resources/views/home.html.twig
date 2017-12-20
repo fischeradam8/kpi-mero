@@ -3,27 +3,37 @@
 {% block body %}
     <h1>Összefoglalás</h1>
     <hr>
+    {% if app.user.username == 'fischer.adam' %}
+        <div>
+            <h3>{{ tab1 }}</h3>
+            <div id="pieChart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <hr>
+    {% endif %}
     <div>
-        <h3>{{ kpi1 }}</h3>
-        {#<h4>Jira task: <a target="_blank" href="https://jira.virgo.hu/browse/{{ appIssue.key }}">{{ appIssue.key }}</a></h4>#}
-        {#<h5>Logolt órák: {{ appIssue.loggedHours + 10 }}</h5>#}
-        <h4 id="appDoneIssues"></h4>
-        <h4 id="appRemainingIssues"></h4>
+        <h3>{{ tab2 }}</h3>
+        <h4>Megírt dokumentációk: {{ documents|length }}</h4>
     </div>
     <hr>
     <div>
-        <h3>{{ kpi2 }}</h3>
-        {#<h4>Jira task: <a target="_blank" href="https://jira.virgo.hu/browse/{{ bookIssue.key }}">{{ bookIssue.key }}</a></h4>#}
-        {#<h5>Logolt órák: {{ bookIssue.loggedHours + 3 }}</h5>#}
-        {#<h4>Feldolgozandó témák: {{ 8- numberOfDocuments|default(0) }} </h4>#}
-        {#<h4>Feldolgozott témák: {{ numberOfDocuments|default(0) }}   </h4>#}
+        <h3>{{ tab3 }}</h3>
+        {% set ratio = 0 %}
+        {% for issue in reviewFixIssues %}
+            {% if not issue.reviewHoursLoggedByAssignee == 0 %}
+                {% set ratio = ratio + issue.reviewHoursLoggedByAssignee / issue.hoursLoggedByAssignee %}
+            {% endif %}
+        {% endfor %}
+        {% set ratio = ratio / reviewFixIssues|length %}
+        <h4>Fejlesztés/javítás átlagos aránya: {{ ratio|round(2) }}</h4>
     </div>
-    <hr>
-    <div>
-        <h3>{{ kpi3 }}</h3>
-        <table class="table table-bordered">
-        </table>
-    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="//code.highcharts.com/4.1.8/highcharts.js"></script>
+    <script src="//code.highcharts.com/4.1.8/modules/exporting.js"></script>
+    <script type="text/javascript">
+        {{ chart(appChart) }}
+    </script>
+
+
 {% endblock %}
 
 {% block title %}

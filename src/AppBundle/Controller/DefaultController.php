@@ -6,6 +6,8 @@ use AppBundle\Entity\BookDocument;
 use AppBundle\Entity\JuniorDeveloper;
 use AppBundle\Form\BookDocumentType;
 use AppBundle\Form\JuniorDeveloperType;
+use AppBundle\Utils\GraphCreator;
+use AppBundle\Utils\JiraCalculator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,20 +15,34 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-
     public function indexAction(Request $request)
     {
-
+        //Dokumentumok
         $currentUser = $this->getUser();
         $documents = $this->get('confluence_api')->getAllDocumentsByCurrentUser($currentUser->getUsername());
+
+        //Lekérdező
         $issueForm = $this->createForm('issue_form');
+
+        //Kimentett issuek
         $reviewFixIssues = $this->getJiraCalculator()->getReviewFixes($currentUser->getUsername(), true);
         $appIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-86', $currentUser->getUsername(), false);
         $bookIssue = $this->getJiraCalculator()->getLoggedTimeOnIssue('TELWS-85', $currentUser->getUsername(), false);
-        $board = $this->get('trello_api')->getBoard();
 
-        $response = $this->render('@App/default/index.html.twig', array(
-            'currentUser' => $currentUser->getDisplayName(),
+        //Trello
+        $board = $this->get('trello_api')->getBoard();
+//        $dummy = [
+//            ['name' => 'A grafikon neve', 'data' => [1,2,3,4,5,6]]
+//        ];
+//        $chart = $this->getGraphCreator()->createLineGraph($dummy,'lineChart','cím','vízszint','függőleges');
+
+        //Chartok
+        $appData = array(
+            array('Elkészült taskok', count($board['done'])),
+            array('Hátralevő taskok', count($board['todo'])),
+        );
+        $appChart = $this->getGraphCreator()->createPieGraph($appData, 'pieChart', 'Mérő-app', 'Task');
+        $response = $this->render('@App/index.html.twig', array(
             'appIssue' => $appIssue,
             'bookIssue' => $bookIssue,
             'reviewFixIssues' => $reviewFixIssues,
@@ -34,6 +50,7 @@ class DefaultController extends Controller
             'cardsTodo' => $board['todo'],
             'issueForm' => $issueForm->createView(),
             'documents' => $documents,
+            'appChart' => $appChart,
         ));
         return $response;
     }
@@ -45,12 +62,18 @@ class DefaultController extends Controller
     }
 
     /**
-     * @return \AppBundle\Utils\JiraCalculator|object
+     * @return JiraCalculator
      */
-    protected function getJiraCalculator()
+    public function getJiraCalculator(): JiraCalculator
     {
         return $this->get('jira_calculator');
     }
 
-
+    /**
+     * @return GraphCreator
+     */
+    public function getGraphCreator(): GraphCreator
+    {
+        return $this->get('graph_creator');
+    }
 }

@@ -25,7 +25,7 @@ class JiraCalculator
         if ($userInDB) {
             $userId = $userInDB->getId();
         }
-        if ($useDB){
+        if ($useDB) {
             $issue = $this->checkDatabase($issueKey, $userId);
             if ($issue) {
                 return $issue;
@@ -36,7 +36,7 @@ class JiraCalculator
 
         if (count($issue['fields']['subtasks']) === 2) {
             if ($issue['fields']['subtasks'][0]['fields']['summary'] === 'Review' ||
-                $issue['fields']['subtasks'][0]['fields']['summary'] === 'Review fix'){
+                $issue['fields']['subtasks'][0]['fields']['summary'] === 'Review fix') {
                 $loggedHours = 0;
                 foreach ($issue['fields']['worklog']['worklogs'] as $worklog) {
                     if ($worklog['author']['name'] === $userName) {
@@ -125,7 +125,8 @@ class JiraCalculator
     }
 
     private function checkDatabase(string $issueKey, int $userId)
-    {   $task = $this->em->getRepository(JiraIssue::class)->findOneBy(array("taskNumber" => $issueKey, "assigneeId" => $userId));
+    {
+        $task = $this->em->getRepository(JiraIssue::class)->findOneBy(array("taskNumber" => $issueKey, "assigneeId" => $userId));
         if ($task) {
             return array(
                 'name' => $task->getName(),
@@ -136,7 +137,7 @@ class JiraCalculator
         return false;
     }
 
-    private function saveIssue(string $name, int $userId, string $taskNumber, int $loggedHours, int $reviewHours):void
+    private function saveIssue(string $name, int $userId, string $taskNumber, int $loggedHours, float $reviewHours):void
     {
         $savedIssue = new JiraIssue();
         $savedIssue->setName($name);
@@ -147,6 +148,4 @@ class JiraCalculator
         $this->em->persist($savedIssue);
         $this->em->flush();
     }
-
-
 }

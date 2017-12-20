@@ -2,7 +2,6 @@
 
 namespace AppBundle\Utils;
 
-
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ConfluenceApiService
@@ -36,12 +35,11 @@ class ConfluenceApiService
     {
         $json = json_decode($result, true);
         $result= [];
-        foreach ($json['results'] as $document ){
+        foreach ($json['results'] as $document) {
             if ($document['type'] !== 'attachment') {
                 $result[] = $document;
             }
         }
         return $result;
-
     }
 }

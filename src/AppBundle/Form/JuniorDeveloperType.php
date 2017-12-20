@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form;
 
-
 use AppBundle\Entity\JuniorDeveloper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

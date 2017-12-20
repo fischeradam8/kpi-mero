@@ -18,3 +18,7 @@ services:
     confluence_api:
         class: AppBundle\Utils\ConfluenceApiService
         arguments: [@service_container]
+
+    graph_creator:
+      class: AppBundle\Utils\GraphCreator
+      arguments: []

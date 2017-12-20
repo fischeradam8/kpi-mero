@@ -1,0 +1,9 @@
+{% block body %}
+{% set ratio = 0 %}
+        {% for issue in reviewFixIssues %}
+            {% if not issue.reviewHoursLoggedByAssignee == 0 %}
+                {% set ratio = ratio + issue.reviewHoursLoggedByAssignee / issue.hoursLoggedByAssignee %}
+            {% endif %}
+        {% endfor %}
+        {% set ratio = ratio / reviewFixIssues|length %}
+{% endblock %}

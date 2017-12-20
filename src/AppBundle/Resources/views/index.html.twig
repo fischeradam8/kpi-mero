@@ -1,0 +1,39 @@
+{% extends '@App/base.html.twig' %}
+{% set tab1 = 'Mérő-app' %}
+{% set tab2 = 'Dokumentációk' %}
+{% set tab3 = 'Review pontok' %}
+{% set tab4 = 'Lekérdező' %}
+{% block body %}
+    {% if queryString is defined and queryString == true %}
+        <h3>Nem megfelelő url!</h3>
+    {% endif %}
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <a class="btn btn-primary" href="{{ path('logout') }}" style="float:right">Kijelentkezés</a>
+        <ul class="nav nav-pills">
+            <li class="active"><a href="#tab1" data-toggle="tab">Home</a></li>
+            {% if app.user.username == 'fischer.adam' %}
+            <li><a href="#tab2" data-toggle="tab">{{ tab1 }}</a></li>
+            {% endif %}
+            <li><a href="#tab3" data-toggle="tab">{{ tab2 }}</a></li>
+            <li><a href="#tab4" data-toggle="tab">{{ tab3 }}</a></li>
+            <li><a href="#tab5" data-toggle="tab">{{ tab4 }}</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                {% include '@App/home.html.twig' %}
+            </div>
+            <div class="tab-pane" id="tab2">
+                {% include '@App/tab1.html.twig' %}
+            </div>
+            <div class="tab-pane" id="tab3">
+                {% include '@App/tab2.html.twig' %}
+            </div>
+            <div class="tab-pane" id="tab4">
+                {% include '@App/tab3.html.twig' %}
+            </div><div class="tab-pane" id="tab5">
+                {% include '@App/tab4.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

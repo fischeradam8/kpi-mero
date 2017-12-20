@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-
 use AppBundle\Entity\JuniorDeveloper;
 use AppBundle\Form\JuniorDeveloperType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -46,5 +45,4 @@ class SecurityController extends Controller
             array('form' => $form->createView())
         );
     }
-
 }

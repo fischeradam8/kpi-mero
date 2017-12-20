@@ -19,6 +19,7 @@
         "doctrine/orm": "^2.4.8",
         "incenteev/composer-parameter-handler": "~2.0",
         "medicorenl/jira-api-bundle": "dev-master",
+        "ob/highcharts-bundle": "^1.5",
         "sensio/distribution-bundle": "~4.0",
         "sensio/framework-extra-bundle": "^3.0.2",
         "symfony/assetic-bundle": "~2.3",

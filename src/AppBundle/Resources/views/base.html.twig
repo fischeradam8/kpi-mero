@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        {% set user = currentUser %}
+        {% set user = app.user.displayname %}
         {% set title = user ~ ' KPI mérőszámai' %}
         <meta charset="UTF-8" />
         <title>{% block title %}{{ title }}{% endblock %}</title>

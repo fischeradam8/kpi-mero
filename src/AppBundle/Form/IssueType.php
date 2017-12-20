@@ -32,7 +32,7 @@ class IssueType extends AbstractType
             ->add('developer', 'text', [
                 'label' => 'Fejlesztő neve',
             ])
-            ->add('save', 'submit')
+            ->add('Keresés', 'submit')
         ;
     }
 

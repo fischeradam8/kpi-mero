@@ -31,10 +31,6 @@ class DefaultController extends Controller
 
         //Trello
         $board = $this->get('trello_api')->getBoard();
-//        $dummy = [
-//            ['name' => 'A grafikon neve', 'data' => [1,2,3,4,5,6]]
-//        ];
-//        $chart = $this->getGraphCreator()->createLineGraph($dummy,'lineChart','cím','vízszint','függőleges');
 
         //Chartok
         $appData = array(
@@ -42,6 +38,7 @@ class DefaultController extends Controller
             array('Hátralevő taskok', count($board['todo'])),
         );
         $appChart = $this->getGraphCreator()->createPieGraph($appData, 'pieChart', 'Mérő-app', 'Task');
+
         $response = $this->render('@App/index.html.twig', array(
             'appIssue' => $appIssue,
             'bookIssue' => $bookIssue,

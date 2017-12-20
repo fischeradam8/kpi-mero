@@ -8,6 +8,10 @@ class GraphCreator
 {
     public function createLineGraph(array $data, string $id, string $title, string $horizontalTitle, string $verticalTitle): Highchart
     {
+//                $dummy = [
+//            ['name' => 'A grafikon neve', 'data' => [1,2,3,4,5,6]]
+//        ];
+
         $ob = new Highchart();
         $ob->chart->renderTo($id);  // The #id of the div where to render the chart
         $ob->title->text($title);
